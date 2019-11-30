@@ -1,0 +1,53 @@
+* counsel-web -- Dynamic web search and suggestions with ivy
+
+** Description
+Search the web with dynamic suggestions and browse the results -- all from the comfort of Emacs and ivy.
+
+** Demo
+
+
+** Features
+
+*** Suggestions
+=counsel-web-suggest= shows search suggestions as you type.
+
+*** Search
+=counsel-web-search= searches and presents the results in the ivy minibuffer.
+
+To update the search with each key press:
+
+#+begin_src emacs-lisp
+(setq counsel-web-search-dynamic-update t)
+#+end_src
+
+Note that dynamic updates can sometimes lead the search engine to temporarily block requests if it decides Emacs is a running a search robot.
+
+*** Search Engines
+DuckDuckGo and Google are built in. DuckDuckGo is the default. Change to Google like this:
+
+#+begin_src emacs-lisp
+(setq counsel-web-suggest-function #'counsel-web-suggest--google
+      counsel-web-search-function #'counsel-web-search--google)
+#+end_src
+
+Add more search engines easily by copying those functions.
+
+** Usage
+Copy =counsel-web.el= into your =load-path= and do something like this:
+
+#+begin_src emacs-lisp
+(require 'counsel-web)
+(bind-key (kbd "C-c s") #'counsel-web-suggest)
+(bind-key (kbd "C-c S") #'counsel-web-search)
+#+end_src
+
+** Similar Projects
+
+*** Google this
+https://github.com/Malabarba/emacs-google-this
+
+*** Engine-mode
+https://github.com/hrs/engine-mode
+
+** TODO
+*** =counsel-web-at-point=

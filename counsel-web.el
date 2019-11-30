@@ -4,8 +4,9 @@
 ;; Maintainer: Matthew Sojourner Newton
 ;; Version: "0.1"
 ;; Package-Requires: ((emacs "25.1") (swiper "0.12.0") (request "0.3.0"))
-;; Homepage: N/A
-;; Keywords: search web
+;; Homepage: https://github.com/mnewt/counsel-web
+;; Keywords: convenience hypermedia
+;; Prefix: counsel-web
 
 
 ;; This file is not part of GNU Emacs
@@ -26,13 +27,8 @@
 
 ;;; Commentary:
 
-;; Asynchronously search the Web using Ivy.
-
-;;; TODO:
-;;  `counsel-web-at-point'
-;; - Option to not update search dynamically
-;; - See https://github.com/Malabarba/emacs-google-this
-;; - See https://github.com/hrs/engine-mode
+;; Search the web with dynamic suggestions and browse the results -- all from
+;; the comfort of Emacs and ivy.
 
 ;;; Code:
 
@@ -40,31 +36,32 @@
 (require 'request)
 (require 'counsel)
 
+
 
 ;;;; Variables
 
 (defcustom counsel-web-suggest-function #'counsel-web-suggest--duckduckgo
-  "The function to call to retrieve suggestions."
+  "The function used to retrieve suggestions."
   :group 'counsel-web
   :type 'symbol)
 
 (defcustom counsel-web-suggest-action #'counsel-web-search
-  "The function to call when a suggestion candidate is selected."
+  "The function used when a suggestion candidate is selected."
   :group 'counsel-web
   :type 'symbol)
 
 (defcustom counsel-web-search-function #'counsel-web-search--duckduckgo
-  "The function to call to retrieve search results."
+  "The function used to retrieve search results."
   :group 'counsel-web
   :type 'symbol)
 
 (defcustom counsel-web-search-action #'eww
-  "The function to call when a search candidate is selected."
+  "The function used when a search candidate is selected."
   :group 'counsel-web
   :type 'symbol)
 
 (defcustom counsel-web-search-alternate-action #'browse-url-default-browser
-  "The function to call when a search candidate is selected (alternate)."
+  "The function used when a search candidate is selected (alternate)."
   :group 'counsel-web
   :type 'symbol)
 
@@ -79,10 +76,14 @@
 (defvar counsel-web-search-history nil
   "History for `counsel-web-search'.")
 
-(defvar counsel-web-search--browse-first-result nil
-  "If non-nil, immediately select the first candidate.")
+(defvar counsel-web-search-minibuffer-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [remap ivy-alt-done] 'counsel-web-search-refresh)
+    map)
+  "Keymap added to `counsel-web-search' minibuffers.")
 
-;;;; Functions
+
+ ;;;; Functions
 
 (defun counsel-web--format-candidate (text url)
   "Format TEXT and URL as an `ivy-read' candidate."
@@ -132,7 +133,7 @@ function."
          :parser parser
          :error #'counsel-web--handle-error
          :success #'counsel-web--async-sentinel)
-        placeholder)
+        (list "" placeholder))
     (let (candidates)
       (request
        url
@@ -144,9 +145,41 @@ function."
                                (setq candidates data))))
       candidates)))
 
-(defun counsel-web--duckduckgo-search-url (string)
-  "Make search URL from STRING."
-  (concat "https://duckduckgo.com/html/?q=" (url-hexify-string string)))
+(defun counsel-web-suggest--collection-function (string)
+  "Retrieve search suggestions for STRING."
+  (or (ivy-more-chars)
+      (funcall counsel-web-suggest-function string)))
+
+(defun counsel-web-search--collection-function (string)
+  "Retrieve search results for STRING asynchronously."
+  (or (ivy-more-chars)
+      (funcall counsel-web-search-function string)))
+
+(defun counsel-web-search--browse-first-result (string)
+  "Immediately browse the first result the search for STRING."
+  (funcall (counsel-web-search--call-with-url counsel-web-search-action)
+           (car (let ((counsel-web-search-dynamic-update nil))
+                  (counsel-web-search--collection-function string)))))
+
+(defun counsel-web-search--call-with-url (function)
+  "Wrap FUNCTION so it can be used as an action."
+  (lambda (candidate)
+    (funcall function (get-text-property 0 'shr-url candidate))))
+
+(defun counsel-web-search--call-in-other-window (function)
+  "Wrap FUNCTION so it opens in other window."
+  (lambda (candidate)
+    (other-window 1)
+    (funcall (counsel-web-search--call-with-url function) candidate)))
+
+(defun counsel-web-search-refresh ()
+  "Perform a new search using the entered text as the input."
+  (interactive)
+  (ivy-quit-and-run (counsel-web-search ivy-text)))
+
+
+
+;;;; Search Engines
 
 (defun counsel-web-suggest--duckduckgo (string)
   "Retrieve search suggestions from DuckDuckGo for STRING."
@@ -155,9 +188,7 @@ function."
            (url-hexify-string string))
    (lambda ()
      (mapcar
-      (lambda (e)
-        (let ((s (cdar e)))
-          (propertize s 'shr-url (counsel-web--duckduckgo-search-url s))))
+      (lambda (e) (cdr (car e)))
       (append (json-read) nil)))))
 
 (defun counsel-web-search--duckduckgo (string)
@@ -172,7 +203,7 @@ function."
            (dom-texts a)
            (substring href (string-match "http" href)))))
       (dom-by-class (libxml-parse-html-region (point-min) (point-max)) "result__a")))
-   (list "" "Searching DuckDuckGo...")))
+   "Searching DuckDuckGo..."))
 
 (defun counsel-web-suggest--google (string)
   "Retrieve search suggestions from Google for STRING."
@@ -195,48 +226,8 @@ function."
                (dom-texts a)
                (substring (assoc-default 'href (dom-attributes a))
                           (match-beginning 1) (match-end 1)))))
-   (list "" "Searching Google...")))
+   "Searching Google..."))
 
-(defun counsel-web-suggest--collection-function (string)
-  "Retrieve search suggestions for STRING."
-  (or
-   (let ((ivy-text string))
-     (ivy-more-chars))
-   (funcall counsel-web-suggest-function string)))
-
-(defun counsel-web-search--async-collection-function (string)
-  "Retrieve search results for STRING asynchronously."
-  (or (let ((ivy-text string))
-        (ivy-more-chars))
-      (funcall counsel-web-search-function string)))
-
-(defun counsel-web-search--sync-collection-function
-    (string collection &optional predicate)
-  "Retrieve search results for STRING synchronously."
-  (let ((collection (or collection (funcall counsel-web-search-function string))))
-    (if (functionp predicate)
-        (seq-filter predicate collection)
-      collection)))
-
-(defun counsel-web-search--browse-first-result (string)
-  "Immediately browse the first result the search for STRING."
-  (let ((counsel-web-search--browse-first-result t))
-    (counsel-web-search string)))
-
-(defun counsel-web-search--do-action (candidate)
-  "Pass the CANDIDATE's url to `counsel-web-search-action'."
-  (funcall-interactively counsel-web-search-action
-                         (get-text-property 0 'shr-url candidate)))
-
-(defun counsel-web-search--do-alternate-action (candidate)
-  "Pass the CANDIDATE's url to `counsel-web-search-action'."
-  (funcall-interactively counsel-web-search-alternate-action
-                         (get-text-property 0 'shr-url candidate)))
-
-(defun counsel-web-search--do-action-other-window (candidate)
-  "Switch to other window and call the action on the CANDIDATE."
-  (other-window 1)
-  (counsel-web-search--do-action candidate))
 
 
 ;;;; Commands
@@ -250,13 +241,15 @@ PROMPT, if non-nil, is passed as `ivy-read' prompt argument.
 SUGGEST-FUNCTION, if non-nil, is called to perform the search.
 ACTION, if non-nil, is called to load the selected candidate."
   (interactive)
-  (let ((counsel-web-suggest-function (or suggest-function counsel-web-suggest-function)))
+  (let ((counsel-web-suggest-function (or suggest-function counsel-web-suggest-function))
+        (counsel-web-suggest-action (or action counsel-web-suggest-action)))
     (ivy-read (or prompt "Web Search: ")
               #'counsel-web-suggest--collection-function
               :initial-input initial-input
               :dynamic-collection t
               :history 'counsel-web-suggest-history
-              :action (or action counsel-web-suggest-action)
+              :action counsel-web-suggest-action
+              :unwind #'counsel-delete-process
               :caller 'counsel-web-suggest)))
 
 (ivy-add-actions
@@ -265,35 +258,40 @@ ACTION, if non-nil, is called to load the selected candidate."
 
 ;;;###autoload
 (defun counsel-web-search (&optional string prompt search-function action)
-  "Perform a web search for STRING and return the results in `ivy-read'.
+  "Interactively search the web for STRING.
 
 PROMPT, if non-nil, is passed as `ivy-read' prompt argument.
 SEARCH-FUNCTION, if non-nil, is called to perform the search.
 ACTION, if non-nil, is called to load the selected candidate."
   (interactive)
-  (if string
-      (let ((counsel-web-search-function (or search-function counsel-web-search-function))
-            (counsel-web-search-action (or action counsel-web-search-action))
-            (collection-function (if  counsel-web-search-dynamic-update
-                                     #'counsel-web-search--async-collection-function
-                                   #'counsel-web-search--sync-collection-function))
-            (minibuffer-setup-hook
-             (append minibuffer-setup-hook
-                     (lambda () (face-remap-add-relative 'bold 'ivy-current-match)))))
-        (ivy-read (or prompt "Browse: ")
-                  collection-function
-                  :initial-input string
-                  :dynamic-collection counsel-web-search-dynamic-update
-                  :require-match t
-                  :history 'counsel-web-search-history
-                  :action #'counsel-web-search--do-action
-                  :caller 'counsel-web-search))
-    (counsel-web-suggest string prompt nil #'counsel-web-search)))
+  (let ((counsel-web-search-function (or search-function counsel-web-search-function))
+        (counsel-web-search-action (or action counsel-web-search-action))
+        (string (if counsel-web-search-dynamic-update
+                    string
+                  (or string
+                      (read-string "Web Search: " nil 'counsel-web-search-history)))))
+    (ivy-read (or prompt "Browse: ")
+              (if counsel-web-search-dynamic-update
+                  #'counsel-web-search--collection-function
+                (counsel-web-search--collection-function string))
+              :initial-input string
+              :dynamic-collection counsel-web-search-dynamic-update
+              :require-match t
+              :history 'counsel-web-search-history
+              :keymap counsel-web-search-minibuffer-map
+              :action (counsel-web-search--call-with-url
+                       counsel-web-search-action)
+              :unwind #'counsel-delete-process
+              :caller 'counsel-web-search)))
 
 (ivy-add-actions
  'counsel-web-search
- `(("j" counsel-web-search--do-action-other-window "other window")
-   ("m" counsel-web-search--do-alternate-action "alternate browser")))
+ `(("j"
+    ,(counsel-web-search--call-in-other-window counsel-web-search-action)
+    "other window")
+   ("m"
+    ,(counsel-web-search--call-with-url counsel-web-search-alternate-action)
+    "alternate browser")))
 
 (provide 'counsel-web)
 
