@@ -4,7 +4,8 @@
 Search the web with dynamic suggestions and browse the results -- all from the comfort of Emacs and ivy.
 
 ** Demo
-[[file:counsel-web-demo.gif][Demo GIF]]
+#+ATTR_HTML: :width 800px
+[[file:counsel-web-demo.gif]]
 
 ** Features
 
