@@ -4,15 +4,17 @@
 Search the web with dynamic suggestions and browse the results -- all from the comfort of Emacs and ivy.
 
 ** Demo
-
+[[file:counsel-web-demo.webm][Demo]]
 
 ** Features
 
 *** Suggestions
-=counsel-web-suggest= shows search suggestions as you type.
+=counsel-web-suggest= shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=.
 
 *** Search
-=counsel-web-search= searches and presents the results in the ivy minibuffer.
+=counsel-web-search= searches and presents the results in the ivy minibuffer. Press =RET= to browse to the selected result.
+
+In the results minibuffer, you can also type a new search and press =C-j= to see the new results.
 
 To update the search with each key press:
 
@@ -20,7 +22,7 @@ To update the search with each key press:
 (setq counsel-web-search-dynamic-update t)
 #+end_src
 
-Note that dynamic updates can sometimes lead the search engine to temporarily block requests if it decides Emacs is a running a search robot.
+Note that dynamic updates can sometimes lead the search engine to temporarily block requests if it decides Emacs is a running a search robot. Suggestions regarding how to fix this are welcome.
 
 *** Search Engines
 DuckDuckGo and Google are built in. DuckDuckGo is the default. Change to Google like this:
@@ -30,15 +32,16 @@ DuckDuckGo and Google are built in. DuckDuckGo is the default. Change to Google 
       counsel-web-search-function #'counsel-web-search--google)
 #+end_src
 
-Add more search engines easily by copying those functions.
+Add more search engines by copying those functions.
 
 ** Usage
-Copy =counsel-web.el= into your =load-path= and do something like this:
+Add =counsel-web.el= into your =load-path= and do something like this:
 
 #+begin_src emacs-lisp
 (require 'counsel-web)
-(bind-key (kbd "C-c s") #'counsel-web-suggest)
-(bind-key (kbd "C-c S") #'counsel-web-search)
+(global-set-key (kbd "C-c w") #'counsel-web-suggest)
+(global-set-key (kbd "C-c W") #'counsel-web-search)
+(global-set-key (kbd "C-c C-w" #'counsel-web-thing-at-point))
 #+end_src
 
 ** Similar Projects
@@ -48,6 +51,3 @@ https://github.com/Malabarba/emacs-google-this
 
 *** Engine-mode
 https://github.com/hrs/engine-mode
-
-** TODO
-*** =counsel-web-at-point=

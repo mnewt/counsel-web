@@ -40,6 +40,11 @@
 
 ;;;; Variables
 
+(defgroup counsel-web nil
+  "Search the web with Emacs and ivy."
+  :group 'counsel
+  :prefix "counsel-web-")
+
 (defcustom counsel-web-suggest-function #'counsel-web-suggest--duckduckgo
   "The function used to retrieve suggestions."
   :group 'counsel-web
@@ -69,6 +74,11 @@
   "If non-nil, update search with each change in the minibuffer."
   :group 'counsel-web
   :type 'boolean)
+
+(defcustom counsel-web-thing 'word
+  "The type of thing to search for in `counsel-web-thing-at-point'."
+  :group 'counsel-web
+  :type 'symbol)
 
 (defvar counsel-web-suggest-history nil
   "History for `counsel-web-suggest'.")
@@ -279,8 +289,7 @@ ACTION, if non-nil, is called to load the selected candidate."
               :require-match t
               :history 'counsel-web-search-history
               :keymap counsel-web-search-minibuffer-map
-              :action (counsel-web-search--call-with-url
-                       counsel-web-search-action)
+              :action (counsel-web-search--call-with-url counsel-web-search-action)
               :unwind #'counsel-delete-process
               :caller 'counsel-web-search)))
 
@@ -292,6 +301,12 @@ ACTION, if non-nil, is called to load the selected candidate."
    ("m"
     ,(counsel-web-search--call-with-url counsel-web-search-alternate-action)
     "alternate browser")))
+
+;;;###autoload
+(defun counsel-web-thing-at-point (thing)
+  "Interactively search the web for the THING at point."
+  (interactive (list (thing-at-point counsel-web-thing)))
+  (counsel-web-search thing))
 
 (provide 'counsel-web)
 
