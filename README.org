@@ -4,7 +4,7 @@
 Search the web with dynamic suggestions and browse the results -- all from the comfort of Emacs and ivy.
 
 ** Demo
-[[file:counsel-web-demo.webm][Demo]]
+#+HTML: <video src="counsel-web-demo.webm" controls width="80%"></video>
 
 ** Features
 
