@@ -42,7 +42,7 @@ Add =counsel-web.el= into your =load-path= and do something like this:
 (require 'counsel-web)
 (global-set-key (kbd "C-c w") #'counsel-web-suggest)
 (global-set-key (kbd "C-c W") #'counsel-web-search)
-(global-set-key (kbd "C-c C-w" #'counsel-web-thing-at-point))
+(global-set-key (kbd "C-c C-w") #'counsel-web-thing-at-point)
 #+end_src
 
 ** Similar Projects
