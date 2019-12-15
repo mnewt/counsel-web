@@ -53,8 +53,17 @@ Add =counsel-web.el= into your =load-path= and do something like this:
 
 ** Similar Projects
 
+*** =counsel-search= in counsel itself
+=counsel-search= is very similar to =counsel-web-suggest=. However, =counsel= currently does not provide an equivalent to =counsel-web-search=.
+
 *** Google this
 https://github.com/Malabarba/emacs-google-this
+Google this searches Google for things under point, somewhat similar to =counsel-web-thing-at-point=. However, it does not have equivalent functions to =counsel-web-suggest= or =counsel-web-search=.
 
 *** Engine-mode
 https://github.com/hrs/engine-mode
+Engine-mode sends a search to the browser, it doesn't parse the search and results in Emacs.
+
+*** Helm-google
+https://framagit.org/steckerhalter/helm-google
+The most similar, it displays search results in the helm buffer like =counse-web= does in the ivy minibuffer.
