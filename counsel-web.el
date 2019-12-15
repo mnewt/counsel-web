@@ -101,10 +101,13 @@
     (propertize (concat text "\n" (propertize url 'face 'shadow)) 'shr-url url)))
 
 (cl-defun counsel-web--handle-error (&rest args &key error-thrown &allow-other-keys)
+  "Handle error from `request' with ARGS.
+
+Display a message with the ERROR-THROWN."
   (message "Web search error: %S" error-thrown))
 
 (cl-defun counsel-web--async-sentinel (&key data &allow-other-keys)
-  "Sentinel function for an asynchronous counsel web request.
+  "Process returned DATA for an asynchronous counsel web request.
 
 Adapted from `counsel--async-sentinel'."
   (when data
@@ -126,8 +129,7 @@ Adapted from `counsel--async-sentinel'."
     (setq ivy--old-cands ivy--all-candidates)
     (if ivy--all-candidates
         (ivy--exhibit)
-      (ivy--insert-minibuffer ""))
-    (when counsel-web-search--browse-first-result (ivy-done))))
+      (ivy--insert-minibuffer ""))))
 
 (defun counsel-web--request (url parser &optional placeholder)
   "Search using the given URL and PARSER.
