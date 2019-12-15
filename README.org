@@ -25,6 +25,12 @@ To update the search with each key press:
 
 Note that dynamic updates can sometimes lead the search engine to temporarily block requests if it decides Emacs is a running a search robot. Suggestions regarding how to fix this are welcome.
 
+To open the selected result in the operating system browser instead of Emacs:
+
+#+begin_src emacs-lisp
+(setq counsel-web-search-action #'browse-url)
+#+end_src
+
 *** Search Engines
 DuckDuckGo and Google are built in. DuckDuckGo is the default. Change to Google like this:
 
