@@ -307,7 +307,7 @@ ACTION, if non-nil, is called to load the selected candidate."
               (if counsel-web-search-dynamic-update
                   #'counsel-web-search--collection-function
                 (counsel-web-search--collection-function string))
-              :initial-input string
+              :initial-input nil
               :dynamic-collection counsel-web-search-dynamic-update
               :require-match t
               :history 'counsel-web-search-history
