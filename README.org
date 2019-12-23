@@ -7,17 +7,47 @@ Search the web with dynamic suggestions and browse the results -- all from the c
 #+ATTR_HTML: :width 800px
 [[file:counsel-web-demo.gif]]
 
-** Features
+** Usage
 
 *** Suggestions
 =counsel-web-suggest= shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=.
 
 *** Search
-=counsel-web-search= searches and presents the results in the ivy minibuffer. Press =RET= to browse to the selected result.
+=counsel-web-search= searches and presents the results in the ivy minibuffer. 
 
-In the results minibuffer, you can also type a new search and press =C-j= to see the new results.
+Press =RET= to browse to the selected result.
 
-To update the search with each key press:
+Type a new search and press =C-j= to update the search.
+
+Press =C-M-j= (=ivy-alternate-action=) to choose a secondary action.
+
+Press =M-o= to choose from a menu of alternate actions.
+
+*** Settings
+
+**** Change the default browser
+To open the selected result in the operating system browser instead of Emacs:
+
+#+begin_src emacs-lisp
+(setq counsel-web-search-action #'browse-url)
+#+end_src
+
+**** Change the alternate browser
+#+begin_src emacs-lisp
+(setq counsel-web-search-alternate-action #'w3m)
+#+end_src
+
+**** Change Search Engines
+     DuckDuckGo and Google are built in. DuckDuckGo is the default. Change to Google like this:
+
+     #+begin_src emacs-lisp
+     (setq counsel-web-engine 'google)
+     #+end_src
+
+     See =counsel-web-engine-alist= to learn how to add more search engines.
+
+**** Update search results with each keystroke
+*Experimental!* To update the search (not suggestions, but the actual search results) with each key press:
 
 #+begin_src emacs-lisp
 (setq counsel-web-search-dynamic-update t)
@@ -25,22 +55,7 @@ To update the search with each key press:
 
 Note that dynamic updates can sometimes lead the search engine to temporarily block requests if it decides Emacs is a running a search robot. Suggestions regarding how to fix this are welcome.
 
-To open the selected result in the operating system browser instead of Emacs:
-
-#+begin_src emacs-lisp
-(setq counsel-web-search-action #'browse-url)
-#+end_src
-
-*** Search Engines
-DuckDuckGo and Google are built in. DuckDuckGo is the default. Change to Google like this:
-
-#+begin_src emacs-lisp
-(setq counsel-web-engine 'google)
-#+end_src
-
-See =counsel-web-engine-alist= to learn how to add more search engines.
-
-** Usage
+** Installation
 Add =counsel-web.el= into your =load-path= and do something like this:
 
 #+begin_src emacs-lisp
