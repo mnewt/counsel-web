@@ -45,18 +45,27 @@
   :group 'counsel
   :prefix "counsel-web-")
 
-(defcustom counsel-web-suggest-function #'counsel-web-suggest--duckduckgo
-  "The function used to retrieve suggestions."
+(defcustom counsel-web-engine-alist
+  '((duckduckgo
+     :suggest counsel-web-suggest--duckduckgo
+     :search counsel-web-search--duckduckgo)
+    (google
+     :suggest counsel-web-suggest--google
+     :search counsel-web-search--google))
+  "Alist of search engine configurations."
+  :group 'counsel-web
+  :type '(alist :key-type symbol :value-type plist))
+
+(defcustom counsel-web-engine 'duckduckgo
+  "The search engine used to provide suggestions and search results.
+
+See `counsel-web-engine-alist' for the possible choices."
   :group 'counsel-web
   :type 'symbol)
+
 
 (defcustom counsel-web-suggest-action #'counsel-web-search
   "The function used when a suggestion candidate is selected."
-  :group 'counsel-web
-  :type 'symbol)
-
-(defcustom counsel-web-search-function #'counsel-web-search--duckduckgo
-  "The function used to retrieve search results."
   :group 'counsel-web
   :type 'symbol)
 
@@ -91,6 +100,12 @@
     (define-key map [remap ivy-alt-done] 'counsel-web-search-refresh)
     map)
   "Keymap added to `counsel-web-search' minibuffers.")
+
+(defvar counsel-web--suggest-function nil
+  "The function used to retrieve suggestions.")
+
+(defcustom counsel-web--search-function nil
+  "The function used to retrieve search results.")
 
 
  ;;;; Functions
@@ -160,12 +175,12 @@ function."
 (defun counsel-web-suggest--collection-function (string)
   "Retrieve search suggestions for STRING."
   (or (ivy-more-chars)
-      (funcall counsel-web-suggest-function string)))
+      (funcall counsel-web--suggest-function string)))
 
 (defun counsel-web-search--collection-function (string)
   "Retrieve search results for STRING asynchronously."
   (or (ivy-more-chars)
-      (funcall counsel-web-search-function string)))
+      (funcall counsel-web--search-function string)))
 
 (defun counsel-web-search--browse-first-result (string)
   "Immediately browse the first result the search for STRING."
@@ -253,7 +268,10 @@ PROMPT, if non-nil, is passed as `ivy-read' prompt argument.
 SUGGEST-FUNCTION, if non-nil, is called to perform the search.
 ACTION, if non-nil, is called to load the selected candidate."
   (interactive)
-  (let ((counsel-web-suggest-function (or suggest-function counsel-web-suggest-function))
+  (let ((counsel-web--suggest-function
+         (or suggest-function
+             (plist-get (alist-get counsel-web-engine counsel-web-engine-alist)
+                        :suggest)))
         (counsel-web-suggest-action (or action counsel-web-suggest-action)))
     (ivy-read (or prompt "Web Search: ")
               #'counsel-web-suggest--collection-function
@@ -276,7 +294,10 @@ PROMPT, if non-nil, is passed as `ivy-read' prompt argument.
 SEARCH-FUNCTION, if non-nil, is called to perform the search.
 ACTION, if non-nil, is called to load the selected candidate."
   (interactive)
-  (let ((counsel-web-search-function (or search-function counsel-web-search-function))
+  (let ((counsel-web--search-function
+         (or search-function
+             (plist-get (alist-get counsel-web-engine counsel-web-engine-alist)
+                        :search)))
         (counsel-web-search-action (or action counsel-web-search-action))
         (string (if counsel-web-search-dynamic-update
                     string

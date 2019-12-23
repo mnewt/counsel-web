@@ -35,11 +35,10 @@ To open the selected result in the operating system browser instead of Emacs:
 DuckDuckGo and Google are built in. DuckDuckGo is the default. Change to Google like this:
 
 #+begin_src emacs-lisp
-(setq counsel-web-suggest-function #'counsel-web-suggest--google
-      counsel-web-search-function #'counsel-web-search--google)
+(setq counsel-web-engine 'google)
 #+end_src
 
-Add more search engines by copying those functions.
+See =counsel-web-engine-alist= to learn how to add more search engines.
 
 ** Usage
 Add =counsel-web.el= into your =load-path= and do something like this:
