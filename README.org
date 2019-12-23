@@ -44,7 +44,7 @@
      See =counsel-web-engine-alist= to learn how to add more search engines.
 
 **** Update search results with each keystroke
-     To update the search (not suggestions--the actual search results) with each key press:
+     *Experimental!* To update the search (not suggestions--the actual search results) with each key press:
 
 #+begin_src emacs-lisp
 (setq counsel-web-search-dynamic-update t)
