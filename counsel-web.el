@@ -244,10 +244,10 @@ function."
   (counsel-web--request
    (concat "https://www.google.com/search?q=" (url-hexify-string string))
    (lambda ()
-     (cl-loop for a in (dom-by-tag (libxml-parse-html-region (point-min) (point-max))
-                                   'a)
-              when (string-match "/url\\?q=\\(http[^&]+\\)"
-                                 (assoc-default 'href (dom-attributes a)))
+     (cl-loop for a in (dom-by-tag (libxml-parse-html-region (point-min) (point-max)) 'a)
+              for href = (assoc-default 'href (dom-attributes a))
+              when (string-match "/url\\?q=\\(http[^&]+\\)" href)
+              unless (string-match "accounts.google.com" href)
               collect
               (counsel-web--format-candidate
                (dom-texts a)
