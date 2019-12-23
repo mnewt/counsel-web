@@ -15,13 +15,10 @@ Search the web with dynamic suggestions and browse the results -- all from the c
 *** Search
 =counsel-web-search= searches and presents the results in the ivy minibuffer. 
 
-Press =RET= to browse to the selected result.
-
-Type a new search and press =C-j= to update the search.
-
-Press =C-M-j= (=ivy-alternate-action=) to choose a secondary action.
-
-Press =M-o= to choose from a menu of alternate actions.
+- Press =RET= to browse to the selected result.
+- Type a new search and press =C-j= to update the search.
+- Press =C-M-j= (=ivy-alternate-action=) to choose a secondary action.
+- Press =M-o= to choose from a menu of alternate actions.
 
 *** Settings
 
