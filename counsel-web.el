@@ -104,7 +104,7 @@ See `counsel-web-engine-alist' for the possible choices."
 (defvar counsel-web--suggest-function nil
   "The function used to retrieve suggestions.")
 
-(defcustom counsel-web--search-function nil
+(defvar counsel-web--search-function nil
   "The function used to retrieve search results.")
 
 
@@ -119,7 +119,7 @@ See `counsel-web-engine-alist' for the possible choices."
   "Handle error from `request' with ARGS.
 
 Display a message with the ERROR-THROWN."
-  (message "Web search error: %S" error-thrown))
+  (error "Web search error: %S" error-thrown))
 
 (cl-defun counsel-web--async-sentinel (&key data &allow-other-keys)
   "Process returned DATA for an asynchronous counsel web request.
@@ -306,8 +306,9 @@ ACTION, if non-nil, is called to load the selected candidate."
     (ivy-read (or prompt "Browse: ")
               (if counsel-web-search-dynamic-update
                   #'counsel-web-search--collection-function
-                (counsel-web-search--collection-function string))
-              :initial-input nil
+                (funcall counsel-web--search-function string))
+              :initial-input (when counsel-web-search-dynamic-update
+                               string)
               :dynamic-collection counsel-web-search-dynamic-update
               :require-match t
               :history 'counsel-web-search-history

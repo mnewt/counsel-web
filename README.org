@@ -1,7 +1,7 @@
 * counsel-web -- Dynamic web search and suggestions with ivy
 
 ** Description
-Search the web with dynamic suggestions and browse the results -- all from the comfort of Emacs and ivy.
+   Search the web with dynamic suggestions and browse the results -- all from the comfort of Emacs and ivy.
 
 ** Demo
 #+ATTR_HTML: :width 800px
@@ -10,10 +10,10 @@ Search the web with dynamic suggestions and browse the results -- all from the c
 ** Usage
 
 *** Suggestions
-=counsel-web-suggest= shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=.
+    =counsel-web-suggest= shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=.
 
 *** Search
-=counsel-web-search= searches and presents the results in the ivy minibuffer. 
+    =counsel-web-search= searches and presents the results in the ivy minibuffer. 
 
 - Press =RET= to browse to the selected result.
 - Type a new search and press =C-j= to update the search.
@@ -23,7 +23,7 @@ Search the web with dynamic suggestions and browse the results -- all from the c
 *** Settings
 
 **** Change the default browser
-To open the selected result in the operating system browser instead of Emacs:
+     To open the selected result in the operating system browser instead of Emacs:
 
 #+begin_src emacs-lisp
 (setq counsel-web-search-action #'browse-url)
@@ -44,16 +44,16 @@ To open the selected result in the operating system browser instead of Emacs:
      See =counsel-web-engine-alist= to learn how to add more search engines.
 
 **** Update search results with each keystroke
-*Experimental!* To update the search (not suggestions, but the actual search results) with each key press:
+     To update the search (not suggestions--the actual search results) with each key press:
 
 #+begin_src emacs-lisp
 (setq counsel-web-search-dynamic-update t)
 #+end_src
 
-Note that dynamic updates can sometimes lead the search engine to temporarily block requests if it decides Emacs is a running a search robot. Suggestions regarding how to fix this are welcome.
+Note that dynamic updates can sometimes lead the search engine to temporarily block requests if it decides Emacs is a running a search robot. This seems to be a bigger problem with DuckDuckGo than with Google. Suggestions regarding how to fix this are welcome.
 
 ** Installation
-Add =counsel-web.el= into your =load-path= and do something like this:
+   Add =counsel-web.el= into your =load-path= and do something like this:
 
 #+begin_src emacs-lisp
 (require 'counsel-web)
@@ -65,16 +65,16 @@ Add =counsel-web.el= into your =load-path= and do something like this:
 ** Similar Projects
 
 *** =counsel-search= in counsel itself
-=counsel-search= is very similar to =counsel-web-suggest=. However, =counsel= currently does not provide an equivalent to =counsel-web-search=.
+    =counsel-search= is very similar to =counsel-web-suggest=. However, =counsel= currently does not provide an equivalent to =counsel-web-search=.
 
 *** Google this
-https://github.com/Malabarba/emacs-google-this
-Google this searches Google for things under point, somewhat similar to =counsel-web-thing-at-point=. However, it does not have equivalent functions to =counsel-web-suggest= or =counsel-web-search=.
+    https://github.com/Malabarba/emacs-google-this
+    Google this searches Google for things under point, somewhat similar to =counsel-web-thing-at-point=. However, it does not have equivalent functions to =counsel-web-suggest= or =counsel-web-search=.
 
 *** Engine-mode
-https://github.com/hrs/engine-mode
-Engine-mode sends a search to the browser, it doesn't parse the search and results in Emacs.
+    https://github.com/hrs/engine-mode
+    Engine-mode sends a search to the browser, it doesn't parse the search and results in Emacs.
 
 *** Helm-google
-https://framagit.org/steckerhalter/helm-google
-The most similar, it displays search results in the helm buffer like =counse-web= does in the ivy minibuffer.
+    https://framagit.org/steckerhalter/helm-google
+    The most similar, it displays search results in the helm buffer like =counse-web= does in the ivy minibuffer.
