@@ -84,7 +84,7 @@ See `counsel-web-engine-alist' for the possible choices."
   :group 'counsel-web
   :type 'boolean)
 
-(defcustom counsel-web-thing 'word
+(defcustom counsel-web-thing 'symbol
   "The type of thing to search for in `counsel-web-thing-at-point'."
   :group 'counsel-web
   :type 'symbol)
