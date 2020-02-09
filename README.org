@@ -78,3 +78,6 @@ Note that dynamic updates can sometimes lead the search engine to temporarily bl
 *** Helm-google
     https://framagit.org/steckerhalter/helm-google
     The most similar, it displays search results in the helm buffer like =counse-web= does in the ivy minibuffer.
+
+** License
+   =counsel-web= is released under the [[https://www.gnu.org/licenses/gpl-3.0.en.html][GNU General Public License 3.0]].
