@@ -2,7 +2,7 @@
 
 ;; Author: Matthew Sojourner Newton
 ;; Maintainer: Matthew Sojourner Newton
-;; Version: "0.1"
+;; Version: 0.1
 ;; Package-Requires: ((emacs "25.1") (counsel "0.12.0") (request "0.3.0"))
 ;; Homepage: https://github.com/mnewt/counsel-web
 ;; Keywords: convenience hypermedia
