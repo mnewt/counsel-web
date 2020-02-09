@@ -3,7 +3,7 @@
 ;; Author: Matthew Sojourner Newton
 ;; Maintainer: Matthew Sojourner Newton
 ;; Version: "0.1"
-;; Package-Requires: ((emacs "25.1") (swiper "0.12.0") (request "0.3.0"))
+;; Package-Requires: ((emacs "25.1") (counsel "0.12.0") (request "0.3.0"))
 ;; Homepage: https://github.com/mnewt/counsel-web
 ;; Keywords: convenience hypermedia
 ;; Prefix: counsel-web
@@ -149,7 +149,7 @@ Adapted from `counsel--async-sentinel'."
 (defun counsel-web--request (url parser &optional placeholder)
   "Search using the given URL and PARSER.
 
-PLACEHOLDER is returned for immediate display by `ivy-read'. The
+PLACEHOLDER is returned for immediate display by `ivy-read'.  The
 actual list of candidates is later updated by the \:success
 function."
   (if counsel-web-search-dynamic-update
