@@ -1,7 +1,6 @@
 ;;; counsel-web.el --- Search the Web using Ivy -*- lexical-binding: t -*-
 
-;; Author: Matthew Sojourner Newton
-;; Maintainer: Matthew Sojourner Newton
+;; Author: Matthew Sojourner Newton <matt@mnewton.com>
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "25.1") (counsel "0.12.0") (request "0.3.0"))
 ;; Homepage: https://github.com/mnewt/counsel-web
@@ -22,7 +21,7 @@
 ;; GNU General Public License for more details.
 
 ;; For a full copy of the GNU General Public License
-;; see <http://www.gnu.org/licenses/>.
+;; see <https://www.gnu.org/licenses/>.
 
 
 ;;; Commentary:
@@ -33,6 +32,8 @@
 ;;; Code:
 
 (require 'dom)
+(require 'json)
+(require 'browse-url)
 (require 'request)
 (require 'counsel)
 
