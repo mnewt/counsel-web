@@ -29,6 +29,13 @@
 ;; Search the web with dynamic suggestions and browse the results -- all from
 ;; the comfort of Emacs and ivy.
 
+;; To use this package, add following code to your init file.
+;;
+;;   (with-eval-after-load 'counsel
+;;     (require 'counsel-web)
+;;     (counsel-web-setup))
+;;
+
 ;;; Code:
 
 (require 'dom)
@@ -283,10 +290,6 @@ ACTION, if non-nil, is called to load the selected candidate."
               :unwind #'counsel-delete-process
               :caller 'counsel-web-suggest)))
 
-(ivy-add-actions
- 'counsel-web-suggest
- `(("f" counsel-web-search--browse-first-result "first candidate")))
-
 ;;;###autoload
 (defun counsel-web-search (&optional string prompt search-function action)
   "Interactively search the web for STRING.
@@ -318,14 +321,22 @@ ACTION, if non-nil, is called to load the selected candidate."
               :unwind #'counsel-delete-process
               :caller 'counsel-web-search)))
 
-(ivy-add-actions
- 'counsel-web-search
- `(("j"
-    ,(counsel-web-search--call-in-other-window counsel-web-search-action)
-    "other window")
-   ("m"
-    ,(counsel-web-search--call-with-url counsel-web-search-alternate-action)
-    "alternate browser")))
+;;;###autoload
+(defun counsel-web-setup ()
+  "Setup `counsel-web-setup'."
+  (interactive)
+  (ivy-add-actions
+   'counsel-web-suggest
+   `(("f" counsel-web-search--browse-first-result "first candidate")))
+
+  (ivy-add-actions
+   'counsel-web-search
+   `(("j"
+      ,(counsel-web-search--call-in-other-window counsel-web-search-action)
+      "other window")
+     ("m"
+      ,(counsel-web-search--call-with-url counsel-web-search-alternate-action)
+      "alternate browser"))))
 
 ;;;###autoload
 (defun counsel-web-thing-at-point (thing)
