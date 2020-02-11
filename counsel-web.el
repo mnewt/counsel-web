@@ -306,7 +306,11 @@ ACTION, if non-nil, is called to load the selected candidate."
     (ivy-read (or prompt "Browse: ")
               (if counsel-web-search-dynamic-update
                   #'counsel-web-search--collection-function
-                (funcall counsel-web--search-function string))
+                (funcall (or counsel-web--search-function
+                             (plist-get (alist-get counsel-web-engine
+                                                   counsel-web-engine-alist)
+                                        :search))
+                         string))
               :initial-input (when counsel-web-search-dynamic-update string)
               :dynamic-collection counsel-web-search-dynamic-update
               :require-match t
