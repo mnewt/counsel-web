@@ -31,6 +31,8 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'cl-macs))
 (require 'dom)
 (require 'json)
 (require 'browse-url)
@@ -178,13 +180,16 @@ function."
   (or (ivy-more-chars)
       (funcall counsel-web--suggest-function string)))
 
+(defun counsel-web--search-function (string)
+  "Call the variable `counsel-web--search-function' on STRING."
+  (funcall (or counsel-web--search-function
+               (plist-get (alist-get counsel-web-engine counsel-web-engine-alist)
+                          :search))
+           string))
+
 (defun counsel-web-search--collection-function (string)
   "Retrieve search results for STRING asynchronously."
-  (or (ivy-more-chars)
-      (funcall
-       (or counsel-web--search-function
-           (plist-get (alist-get counsel-web-engine counsel-web-engine-alist) :search))
-       string)))
+  (or (ivy-more-chars) (counsel-web--search-function string)))
 
 (defun counsel-web-search--browse-first-result (string)
   "Immediately browse the first result the search for STRING."
@@ -306,11 +311,7 @@ ACTION, if non-nil, is called to load the selected candidate."
     (ivy-read (or prompt "Browse: ")
               (if counsel-web-search-dynamic-update
                   #'counsel-web-search--collection-function
-                (funcall (or counsel-web--search-function
-                             (plist-get (alist-get counsel-web-engine
-                                                   counsel-web-engine-alist)
-                                        :search))
-                         string))
+                (counsel-web--search-function string))
               :initial-input (when counsel-web-search-dynamic-update string)
               :dynamic-collection counsel-web-search-dynamic-update
               :require-match t
