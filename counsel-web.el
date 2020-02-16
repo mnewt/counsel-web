@@ -31,8 +31,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl-macs))
+(require 'cl-lib)
 (require 'dom)
 (require 'json)
 (require 'browse-url)
