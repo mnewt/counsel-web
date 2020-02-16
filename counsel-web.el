@@ -123,31 +123,6 @@ See `counsel-web-engine-alist' for the possible choices."
 Display a message with the ERROR-THROWN."
   (error "Web search error: %S" error-thrown))
 
-(cl-defun counsel-web--async-sentinel (&key data &allow-other-keys)
-  "Process returned DATA for an asynchronous counsel web request.
-
-Adapted from `counsel--async-sentinel'."
-  (when data
-    (ivy--set-candidates (ivy--sort-maybe data))
-    (when counsel--async-start
-      (setq counsel--async-duration
-            (time-to-seconds (time-since counsel--async-start))))
-    (let ((re (ivy-re-to-str (funcall ivy--regex-function ivy-text))))
-      (if ivy--old-cands
-          (if (eq (ivy-alist-setting ivy-index-functions-alist)
-                  'ivy-recompute-index-zero)
-              (ivy-set-index 0)
-            (ivy--recompute-index re ivy--all-candidates))
-        (unless (ivy-set-index
-                 (ivy--preselect-index
-                  (ivy-state-preselect ivy-last)
-                  ivy--all-candidates))
-          (ivy--recompute-index re ivy--all-candidates))))
-    (setq ivy--old-cands ivy--all-candidates)
-    (if ivy--all-candidates
-        (ivy--exhibit)
-      (ivy--insert-minibuffer ""))))
-
 (defun counsel-web--request (url parser &optional placeholder)
   "Search using the given URL and PARSER.
 
@@ -161,7 +136,9 @@ function."
          :headers '(("User-Agent" . "Emacs"))
          :parser parser
          :error #'counsel-web--handle-error
-         :success #'counsel-web--async-sentinel)
+         :success (cl-function
+                   (lambda (&key data &allow-other-keys)
+                     (ivy-update-candidates data))))
         (list "" placeholder))
     (let (candidates)
       (request
@@ -180,7 +157,7 @@ function."
       (funcall counsel-web--suggest-function string)))
 
 (defun counsel-web--search-function (string)
-  "Call the variable `counsel-web--search-function' on STRING."
+  "Call the a web search function on STRING."
   (funcall (or counsel-web--search-function
                (plist-get (alist-get counsel-web-engine counsel-web-engine-alist)
                           :search))
