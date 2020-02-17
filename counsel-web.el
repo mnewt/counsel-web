@@ -1,8 +1,8 @@
 ;;; counsel-web.el --- Search the Web using Ivy -*- lexical-binding: t -*-
 
 ;; Author: Matthew Sojourner Newton <matt@mnewton.com>
-;; Version: 0.1
-;; Package-Requires: ((emacs "25.1") (counsel "0.12.0") (request "0.3.0"))
+;; Version: 0.2
+;; Package-Requires: ((emacs "24.5") (counsel "0.13.0") (request "0.3.0"))
 ;; Homepage: https://github.com/mnewt/counsel-web
 ;; Keywords: convenience hypermedia
 ;; Prefix: counsel-web
