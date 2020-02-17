@@ -13,7 +13,7 @@
     =counsel-web-suggest= shows search suggestions as you type. Press =RET= to accept the suggestion and send it to =counsel-web-search=.
 
 *** Search
-    =counsel-web-search= searches and presents the results in the ivy minibuffer. 
+    =counsel-web-search= searches and presents the results in the ivy minibuffer.
 
 - Press =RET= to browse to the selected result.
 - Type a new search and press =C-j= to update the search.
@@ -53,14 +53,24 @@
 Note that dynamic updates can sometimes lead the search engine to temporarily block requests if it decides Emacs is a running a search robot. This seems to be a bigger problem with DuckDuckGo than with Google. Suggestions regarding how to fix this are welcome.
 
 ** Installation
-   Add =counsel-web.el= into your =load-path= and do something like this:
-
-#+begin_src emacs-lisp
-(require 'counsel-web)
-(global-set-key (kbd "C-c w") #'counsel-web-suggest)
-(global-set-key (kbd "C-c W") #'counsel-web-search)
-(global-set-key (kbd "C-c C-w") #'counsel-web-thing-at-point)
-#+end_src
+   1. Install =counsel= version =0.13.0= or later.
+   2. Clone this repository, add it to =load-path=, and =require= it.
+   #+begin_src emacs-lisp
+   (add-to-list 'load-path "/path/to/counsel-web")
+   (require 'counsel-web)
+   #+end_src
+   3. Optionally, create some key bindings.
+   #+begin_src emacs-lisp
+   ;; Define "C-c w" as a prefix key.
+   (bind-key "C-c w" nil)
+   (define-prefix-command 'counsel-web-map)
+   (defvar counsel-web-map
+     (let ((map (make-sparse-keymap "counsel-web")))
+       (define-key map (kbd "C-c w") #'counsel-web-suggest)
+       (define-key map (kbd "C-c W") #'counsel-web-search)
+       (define-key map (kbd "C-c C-w") #'counsel-web-thing-at-point)
+       map))
+   #+end_src
 
 ** Similar Projects
 
