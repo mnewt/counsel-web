@@ -3,6 +3,11 @@
 ** Description
    Search the web with dynamic suggestions and browse the results -- all from the comfort of Emacs and ivy.
 
+   The main idea in counsel-web is to not have to browse search results in a browser--instead go directly to the page you were searching for. It accomplishes that in two steps:
+
+   1. =counsel-web-suggest= prompts for a search string, displays dynamic suggestions, and passes the chosen suggestion to:
+   2. =counsel-web-search=, which takes a search string and browses a search candidate.
+
 ** Demo
 #+ATTR_HTML: :width 800px
 [[file:counsel-web-demo.gif]]
