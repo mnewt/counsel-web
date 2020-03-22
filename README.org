@@ -67,7 +67,6 @@ Note that dynamic updates can sometimes lead the search engine to temporarily bl
    3. Optionally, create some key bindings.
    #+begin_src emacs-lisp
    ;; Define "C-c w" as a prefix key.
-   (define-prefix-command 'counsel-web-map)
    (defvar counsel-web-map
      (let ((map (make-sparse-keymap "counsel-web")))
        (define-key map (kbd "w") #'counsel-web-suggest)
