@@ -213,7 +213,9 @@ function."
         (let* ((href (assoc-default 'href (dom-attributes a))))
           (counsel-web--format-candidate
            (dom-texts a)
-           (substring href (string-match "http" href)))))
+           ;; DDG sometimes appends "&rut...", which I can only guess is an
+           ;; anti-bot measure. See https://github.com/mnewt/counsel-web/issues/3.
+           (substring href (string-match "http" href) (string-match "&rut=" href)))))
       (dom-by-class (libxml-parse-html-region (point-min) (point-max)) "result__a")))
    "Searching DuckDuckGo..."))
 
